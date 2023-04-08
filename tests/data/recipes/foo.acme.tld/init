@@ -1,0 +1,10 @@
+#!/bin/sh
+
+#   -------------------------------------------------------------
+#   Alkane :: Example recipe to build a site
+#   - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+#   Project:        Nasqueron
+#   License:        Trivial work, not eligible to copyright
+#   -------------------------------------------------------------
+
+echo "Initialized ... $(date)" > "$ALKANE_SITE_PATH"/hello

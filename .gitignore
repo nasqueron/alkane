@@ -1,0 +1,3 @@
+/target
+/src/data/public_suffix_list.dat
+tests/data/wwwroot/acme.tld/foo/hello
