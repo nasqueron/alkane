@@ -1,0 +1,112 @@
+openapi: '3.0.3'
+
+info:
+  title: Nasqueron Alkane HTTP API
+  version: 0.1.0
+  description: |
+    Alkane is the Nasqueron PaaS to host static and PHP sites.
+
+    This API allows to check if a site is present on the PaaS,
+    or to trigger a new deployment, initializing or updating an existing site.
+
+    Some useful links:
+    - [Operations grimoire :: Alkane](https://agora.nasqueron.org/Operations_grimoire/Alkane)
+    - [DevCentral :: Alkane](https://devcentral.nasqueron.org/tag/alkane/)
+  license:
+    name: BSD-2-Clause
+    url: https://devcentral.nasqueron.org/source/alkane/browse/main/LICENSE
+
+servers:
+  - url: http://172.27.27.10:10206
+
+defaultContentType: application/json
+
+tags:
+  - name: monitoring
+    description: Useful to monitor the application
+  - name: alkane
+    description: Access to Alkane features
+
+paths:
+  /status:
+    get:
+      tags:
+        - monitoring
+      summary: Health status
+      description: Determine if the API is alive
+      operationId: status
+      responses:
+        '200':
+          description: Successful operation
+
+  /init/{siteName}:
+    post:
+      tags:
+        - alkane
+      summary: Initialize a new site on Alkane
+      description: Notify Alkane to run the build script "init"
+      operationId: init
+      parameters:
+        - name: siteName
+          in: path
+          description: The name of the site to deploy, generally its fully qualified domain name (FQDN). For example, "sub.domain.tld".
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          "*/*":
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Successful operation
+
+  /update/{siteName}:
+    post:
+      tags:
+        - alkane
+      summary: Update an existing site on Alkane
+      description: Notify Alkane to run the build script "update"
+      operationId: update
+      parameters:
+        - name: siteName
+          in: path
+          description: The name of the site to deploy, generally its fully qualified domain name (FQDN). For example, "sub.domain.tld".
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          "*/*":
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Successful operation
+
+  /deploy/{siteName}:
+    post:
+      tags:
+        - alkane
+      summary: Deploy a site on Alkane
+      description: Initialize a site if does not exist; otherwise, update it
+      operationId: deploy
+      parameters:
+        - name: siteName
+          in: path
+          description: The name of the site to deploy, generally its fully qualified domain name (FQDN). For example, "sub.domain.tld".
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: false
+        content:
+          "*/*":
+            schema:
+              type: string
+      responses:
+        '200':
+          description: Successful operation
