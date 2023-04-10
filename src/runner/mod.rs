@@ -11,6 +11,7 @@ use std::fmt::{Debug, Display};
 use std::process::{Command, Stdio};
 
 use log::{error, info, warn};
+use serde::Serialize;
 
 //  -------------------------------------------------------------
 //  Modules
@@ -26,6 +27,7 @@ pub mod store;
 //  those exit code inspired by the Nagios one.
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
+#[derive(Debug, Serialize)]
 pub enum RecipeStatus {
     Success,
     Warning,

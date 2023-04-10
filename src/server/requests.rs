@@ -12,6 +12,7 @@ use rocket_codegen::{get, post};
 
 use crate::actions;
 use crate::config::AlkaneConfig;
+use crate::runner::RecipeStatus;
 
 //  -------------------------------------------------------------
 //  Monitoring
@@ -36,7 +37,7 @@ pub fn init(
     site_name: String,
     context: String,
     config: State<AlkaneConfig>,
-) -> ApiJsonResponse<bool> {
+) -> ApiJsonResponse<RecipeStatus> {
     info!("Deploying {}", &site_name);
 
     let context = if context.is_empty() {
@@ -47,11 +48,11 @@ pub fn init(
     debug!("Context: {:?}", &context);
 
     match actions::initialize(&site_name, context, &config) {
-        Ok(_) => true.into_json_response(),
+        Ok(status) => status.into_json_response(),
         Err(error) => {
             warn!("Deployment error: {:?}", error);
 
-            false.into_json_response()
+            RecipeStatus::Error.into_json_response()
         }
     }
 }
@@ -61,7 +62,7 @@ pub fn update(
     site_name: String,
     context: String,
     config: State<AlkaneConfig>,
-) -> ApiJsonResponse<bool> {
+) -> ApiJsonResponse<RecipeStatus> {
     info!("Deploying {}", &site_name);
 
     let context = if context.is_empty() {
@@ -72,11 +73,11 @@ pub fn update(
     debug!("Context: {:?}", &context);
 
     match actions::update(&site_name, context, &config) {
-        Ok(_) => true.into_json_response(),
+        Ok(status) => status.into_json_response(),
         Err(error) => {
             warn!("Deployment error: {:?}", error);
 
-            false.into_json_response()
+            RecipeStatus::Error.into_json_response()
         }
     }
 }
@@ -86,7 +87,7 @@ pub fn deploy(
     site_name: String,
     context: String,
     config: State<AlkaneConfig>,
-) -> ApiJsonResponse<bool> {
+) -> ApiJsonResponse<RecipeStatus> {
     info!("Deploying {}", &site_name);
 
     let context = if context.is_empty() {
@@ -97,11 +98,11 @@ pub fn deploy(
     debug!("Context: {:?}", &context);
 
     match actions::deploy(&site_name, context, &config) {
-        Ok(_) => true.into_json_response(),
+        Ok(status) => status.into_json_response(),
         Err(error) => {
             warn!("Deployment error: {:?}", error);
 
-            false.into_json_response()
+            RecipeStatus::Error.into_json_response()
         }
     }
 }
