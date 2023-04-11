@@ -8,7 +8,7 @@ edition = "2021"
 [dependencies]
 env_logger = "^0.10.0"
 lazy_static = "^1.4.0"
-limiting-factor = "0.7.2"
+limiting-factor = "^0.8.0"
 log = "^0.4.17"
 rocket = "^0.4.11"
 rocket_codegen = "^0.4.11"

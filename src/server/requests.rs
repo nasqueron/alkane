@@ -5,6 +5,7 @@
 //  License:        BSD-2-Clause
 //  -------------------------------------------------------------
 
+use limiting_factor::api::guards::RequestBody;
 use limiting_factor::api::replies::{ApiJsonResponse, ApiResponse};
 use log::{debug, info, warn};
 use rocket::State;
@@ -35,16 +36,12 @@ pub fn is_present(site_name: String, config: State<AlkaneConfig>) -> ApiJsonResp
 #[post("/init/<site_name>", data = "<context>")]
 pub fn init(
     site_name: String,
-    context: String,
+    context: RequestBody,
     config: State<AlkaneConfig>,
 ) -> ApiJsonResponse<RecipeStatus> {
     info!("Deploying {}", &site_name);
 
-    let context = if context.is_empty() {
-        None
-    } else {
-        Some(context)
-    };
+    let context = context.into_optional_string();
     debug!("Context: {:?}", &context);
 
     match actions::initialize(&site_name, context, &config) {
@@ -60,16 +57,12 @@ pub fn init(
 #[post("/update/<site_name>", data = "<context>")]
 pub fn update(
     site_name: String,
-    context: String,
+    context: RequestBody,
     config: State<AlkaneConfig>,
 ) -> ApiJsonResponse<RecipeStatus> {
     info!("Deploying {}", &site_name);
 
-    let context = if context.is_empty() {
-        None
-    } else {
-        Some(context)
-    };
+    let context = context.into_optional_string();
     debug!("Context: {:?}", &context);
 
     match actions::update(&site_name, context, &config) {
@@ -85,16 +78,12 @@ pub fn update(
 #[post("/deploy/<site_name>", data = "<context>")]
 pub fn deploy(
     site_name: String,
-    context: String,
+    context: RequestBody,
     config: State<AlkaneConfig>,
 ) -> ApiJsonResponse<RecipeStatus> {
     info!("Deploying {}", &site_name);
 
-    let context = if context.is_empty() {
-        None
-    } else {
-        Some(context)
-    };
+    let context = context.into_optional_string();
     debug!("Context: {:?}", &context);
 
     match actions::deploy(&site_name, context, &config) {
