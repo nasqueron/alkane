@@ -26,28 +26,44 @@ pub fn serve(args: ServerArgs, config: AlkaneConfig) {
 //  Actions available both for CLI and HTTP
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-pub fn initialize(
+fn run_deployment_action(
     site_name: &str,
     context: Option<String>,
     config: &AlkaneConfig,
+    action: &str,
 ) -> Result<RecipeStatus, DeployError> {
     let db = Database::from_config(config).ok_or_else(|| {
-        let error = AlkaneDeployError::new("Can't initialize database");
+        let error = AlkaneDeployError::new("Can't initialize database", site_name, action);
         DeployError::Alkane(error)
     })?;
 
     let recipes = RecipesStore::from_config(config).ok_or_else(|| {
-        let error = AlkaneDeployError::new("Can't initialize recipes store");
+        let error = AlkaneDeployError::new("Can't initialize recipes store", site_name, action);
         DeployError::Alkane(error)
     })?;
 
     let site = config
         .get_site(site_name, context)
-        .expect("Can't get site path.");
-    let status = recipes.run_recipe(&site, "init");
-    db.set_initialized(&site.name);
+        .ok_or_else(|| {
+            let error = AlkaneDeployError::new("Can't resolve site path", site_name, action);
+            DeployError::Alkane(error)
+        })?;
+
+    let status = recipes.run_recipe(&site, action);
+
+    if action == "init" {
+        db.set_initialized(&site.name);
+    }
 
     Ok(status)
+}
+
+pub fn initialize(
+    site_name: &str,
+    context: Option<String>,
+    config: &AlkaneConfig,
+) -> Result<RecipeStatus, DeployError> {
+    run_deployment_action(site_name, context, config, "init")
 }
 
 pub fn update(
@@ -55,16 +71,7 @@ pub fn update(
     context: Option<String>,
     config: &AlkaneConfig,
 ) -> Result<RecipeStatus, DeployError> {
-    let recipes = RecipesStore::from_config(config).ok_or_else(|| {
-        let error = AlkaneDeployError::new("Can't initialize recipes store");
-        DeployError::Alkane(error)
-    })?;
-
-    let site = config
-        .get_site(site_name, context)
-        .expect("Can't get site path.");
-    let status = recipes.run_recipe(&site, "update");
-    Ok(status)
+    run_deployment_action(site_name, context, config, "update")
 }
 
 pub fn deploy(
@@ -73,9 +80,9 @@ pub fn deploy(
     config: &AlkaneConfig,
 ) -> Result<RecipeStatus, DeployError> {
     if is_present(site_name, config) {
-        update(site_name, context, config)
+        run_deployment_action(site_name, context, config, "update")
     } else {
-        initialize(site_name, context, config)
+        run_deployment_action(site_name, context, config, "init")
     }
 }
 

@@ -89,7 +89,7 @@ fn deploy_exit(result: Result<RecipeStatus, DeployError>) {
         Ok(status) => exit(status.to_status_code()),
 
         Err(error) => {
-            eprintln!("Can't deploy: {:?}", error);
+            eprintln!("{}", error);
             exit(16);
         }
     }

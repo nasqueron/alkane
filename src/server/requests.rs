@@ -47,7 +47,7 @@ pub fn init(
     match actions::initialize(&site_name, context, &config) {
         Ok(status) => status.into_json_response(),
         Err(error) => {
-            warn!("Deployment error: {:?}", error);
+            warn!("{}", error);
 
             RecipeStatus::Error.into_json_response()
         }
@@ -68,7 +68,7 @@ pub fn update(
     match actions::update(&site_name, context, &config) {
         Ok(status) => status.into_json_response(),
         Err(error) => {
-            warn!("Deployment error: {:?}", error);
+            warn!("{}", error);
 
             RecipeStatus::Error.into_json_response()
         }
@@ -89,7 +89,7 @@ pub fn deploy(
     match actions::deploy(&site_name, context, &config) {
         Ok(status) => status.into_json_response(),
         Err(error) => {
-            warn!("Deployment error: {:?}", error);
+            warn!("{}", error);
 
             RecipeStatus::Error.into_json_response()
         }
