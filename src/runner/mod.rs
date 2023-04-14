@@ -8,7 +8,7 @@
 
 use std::ffi::OsStr;
 use std::fmt::{Debug, Display};
-use std::process::{Command, Stdio};
+use std::process::Command;
 
 use log::{error, info, warn};
 use serde::Serialize;
@@ -70,21 +70,19 @@ where
     let result = Command::new(command)
         .args(args)
         .envs(environment)
-        .stdout(Stdio::piped())
-        .stderr(Stdio::piped())
         .output();
 
     match result {
         Ok(process_output) => {
             let stdout = read_bytes(&process_output.stdout);
-            let stderr = read_bytes(&process_output.stdout);
+            let stderr = read_bytes(&process_output.stderr);
 
             if !stdout.is_empty() {
                 info!("Channel stdout: {}", stdout);
             }
 
             if !stderr.is_empty() {
-                warn!("Channel stderr: {}", stdout);
+                warn!("Channel stderr: {}", stderr);
             }
 
             match process_output.status.code() {
