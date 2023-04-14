@@ -26,7 +26,11 @@ pub struct AlkaneDeployError {
 
 impl Display for AlkaneDeployError {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
-        write!(f, "Can't run deployment action '{}' for site '{}': {}", self.action, self.site_name, self.message)
+        write!(
+            f,
+            "Can't run deployment action '{}' for site '{}': {}",
+            self.action, self.site_name, self.message
+        )
     }
 }
 

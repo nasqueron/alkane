@@ -67,10 +67,7 @@ where
 {
     info!("Running command {} with args {:?}", command, args);
 
-    let result = Command::new(command)
-        .args(args)
-        .envs(environment)
-        .output();
+    let result = Command::new(command).args(args).envs(environment).output();
 
     match result {
         Ok(process_output) => {

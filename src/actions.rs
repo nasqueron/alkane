@@ -42,12 +42,10 @@ fn run_deployment_action(
         DeployError::Alkane(error)
     })?;
 
-    let site = config
-        .get_site(site_name, context)
-        .ok_or_else(|| {
-            let error = AlkaneDeployError::new("Can't resolve site path", site_name, action);
-            DeployError::Alkane(error)
-        })?;
+    let site = config.get_site(site_name, context).ok_or_else(|| {
+        let error = AlkaneDeployError::new("Can't resolve site path", site_name, action);
+        DeployError::Alkane(error)
+    })?;
 
     let status = recipes.run_recipe(&site, action);
 
