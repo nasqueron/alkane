@@ -5,8 +5,10 @@
 //  License:        BSD-2-Clause
 //  -------------------------------------------------------------
 
+use std::fs;
 use std::fs::OpenOptions;
 use std::io::Error as IOError;
+use std::io::ErrorKind;
 use std::path::{Path, PathBuf};
 
 use log::warn;
@@ -39,10 +41,17 @@ impl Database {
         let path = self.get_initialized_path(site_name);
 
         if !path.exists() {
-            match touch(&path) {
-                Ok(_) => true,
+            match ensure_parent_directory_exists(&path) {
+                Ok(_) => match touch(&path) {
+                    Ok(_) => true,
+                    Err(error) => {
+                        warn!("Can't mark site {} as initialized: {:?}", site_name, error);
+
+                        false
+                    }
+                },
                 Err(error) => {
-                    warn!("Can't mark site {} as initialized: {:?}", site_name, error);
+                    warn!("Can't create parent directory for {:?}: {:?}", &path, error);
 
                     false
                 }
@@ -64,6 +73,18 @@ fn touch(path: &PathBuf) -> Result<(), IOError> {
     options.create(true).write(true);
 
     options.open(path).map(|_| ())
+}
+
+fn ensure_parent_directory_exists(path: &PathBuf) -> Result<(), IOError> {
+    let parent = path
+        .parent()
+        .ok_or_else(|| IOError::new(ErrorKind::InvalidInput, "Invalid path"))?;
+
+    if !parent.exists() {
+        fs::create_dir_all(parent)?;
+    }
+
+    Ok(())
 }
 
 //  -------------------------------------------------------------
