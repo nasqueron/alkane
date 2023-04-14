@@ -51,7 +51,7 @@ fn run_deployment_action(
 
     let status = recipes.run_recipe(&site, action);
 
-    if action == "init" {
+    if action == "init" && status == RecipeStatus::Success {
         db.set_initialized(&site.name);
     }
 

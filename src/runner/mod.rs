@@ -27,7 +27,7 @@ pub mod store;
 //  those exit code inspired by the Nagios one.
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-#[derive(Debug, Serialize)]
+#[derive(Debug, Serialize, PartialEq)]
 pub enum RecipeStatus {
     Success,
     Warning,
