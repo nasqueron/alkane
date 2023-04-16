@@ -1,0 +1,101 @@
+#!/bin/sh
+
+# PROVIDE: alkane
+# REQUIRE: DAEMON
+# KEYWORD: shutdown
+#
+# Add the following lines to /etc/rc.conf.local or /etc/rc.conf
+# to enable this service:
+#
+# alkane_enable (bool):	Set it to YES to enable alkane.
+#			Default is "NO".
+# alkane_user (user):	Set user to run alkane.
+#			Default is "deploy".
+# alkane_dir_db (path):	The database directory to use. Must match config.
+#			Default is "/var/db/alkane".
+# alkane log_enable (bool): Enable logging to a specific log file
+#           Default is "YES"
+# alkane_log_path (path): The path to the software log
+#           Default is "/var/log/alkane.log".
+# alkane_log_level (str): The level of verbosity of the log (debug/info will output Rocket/Hyper too)
+#           Default is "warn"
+# alkane_syslog_output_enable (bool):    Set to enable syslog output.
+#                   Default is "NO". See daemon(8).
+# alkane_syslog_output_priority (str):   Set syslog priority if syslog enabled.
+#                   Default is "warn". See daemon(8).
+# alkane_syslog_output_facility (str):   Set syslog facility if syslog enabled.
+#                   Default is "daemon". See daemon(8).
+
+. /etc/rc.subr
+
+name=alkane
+rcvar=alkane_enable
+
+load_rc_config $name
+
+: ${alkane_enable:="NO"}
+: ${alkane_user:="deploy"}
+: ${alkane_dir_db:="/var/db/alkane"}
+: ${alkane_log_enable:="YES"}
+: ${alkane_log_path:="/var/log/alkane.log"}
+: ${alkane_log_level:="warn"}
+: ${alkane_config:="/usr/local/etc/alkane.conf"}
+: ${alkane_address:="localhost"}
+: ${alkane_port:="10206"}
+
+DAEMON=$(/usr/sbin/daemon 2>&1 | grep -q syslog ; echo $?)
+
+if [ ${DAEMON} -eq 0 ]; then
+        : ${alkane_syslog_output_enable:="NO"}
+        : ${alkane_syslog_output_priority:="warn"}
+        : ${alkane_syslog_output_facility:="daemon"}
+        if checkyesno alkane_syslog_output_enable; then
+                alkane_syslog_output_flags="-T ${name}"
+
+                if [ -n "${alkane_syslog_output_priority}" ]; then
+                        alkane_syslog_output_flags="${alkane_syslog_output_flags} -s ${alkane_syslog_output_priority}"
+                fi
+
+                if [ -n "${alkane_syslog_output_facility}" ]; then
+                        alkane_syslog_output_flags="${alkane_syslog_output_flags} -l ${alkane_syslog_output_facility}"
+                fi
+        fi
+else
+        alkane_syslog_output_enable="NO"
+        alkane_syslog_output_flags=""
+fi
+
+if checkyesno alkane_log_enable; then
+        alkane_log_enable="YES"
+        alkane_log_flags="-o ${alkane_log_path}"
+        alkane_env="${alkane_env} RUST_LOG=warn,alkane=${alkane_log_level} ${alkane_env}"
+else
+        alkane_log_enable="NO"
+fi
+
+alkane_env="${alkane_env} ROCKET_SECRET=$(openssl rand -base64 32) ROCKET_PORT=${alkane_port} ROCKET_ADDRESS=${alkane_address} ${alkane_env}"
+
+pidfile=/var/run/alkane.pid
+procname="/usr/local/bin/alkane"
+command="/usr/sbin/daemon"
+command_args="-f -t ${name} ${alkane_log_flags} ${alkane_syslog_output_flags} -p ${pidfile} /usr/bin/env ${alkane_env} ${procname} server"
+
+start_precmd=alkane_startprecmd
+required_files="$alkane_config"
+
+alkane_startprecmd()
+{
+        touch ${pidfile}
+        chown ${alkane_user} ${alkane_log_path}
+
+        if [ "${alkane_log_enable}" = "YES" ]; then
+                touch ${alkane_log_path}
+                chown ${alkane_user} ${alkane_log_path}
+        fi
+
+        if [ ! -d ${alkane_dir_db} ]; then
+                install -d -o ${alkane_user} ${alkane_dir_db}
+        fi
+}
+
+run_rc_command "$1"
