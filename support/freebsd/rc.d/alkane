@@ -78,7 +78,7 @@ alkane_env="${alkane_env} ROCKET_SECRET=$(openssl rand -base64 32) ROCKET_PORT=$
 pidfile=/var/run/alkane.pid
 procname="/usr/local/bin/alkane"
 command="/usr/sbin/daemon"
-command_args="-f -t ${name} ${alkane_log_flags} ${alkane_syslog_output_flags} -p ${pidfile} /usr/bin/env ${alkane_env} ${procname} server"
+command_args="-f -t ${name} ${alkane_log_flags} ${alkane_syslog_output_flags} -p ${pidfile} ${procname} server"
 
 start_precmd=alkane_startprecmd
 required_files="$alkane_config"
