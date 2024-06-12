@@ -86,7 +86,7 @@ required_files="$alkane_config"
 alkane_startprecmd()
 {
         touch ${pidfile}
-        chown ${alkane_user} ${alkane_log_path}
+        chown ${alkane_user} ${pidfile}
 
         if [ "${alkane_log_enable}" = "YES" ]; then
                 touch ${alkane_log_path}
