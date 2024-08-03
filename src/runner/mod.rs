@@ -84,7 +84,7 @@ where
 
             match process_output.status.code() {
                 None => {
-                    warn!("Process terminated by signal.");
+                    warn!("Process hard stopped by signal.");
 
                     RecipeStatus::Unknown
                 }
