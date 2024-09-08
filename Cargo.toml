@@ -6,16 +6,16 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-env_logger = "^0.10.0"
-lazy_static = "^1.4.0"
+env_logger = "^0.11.5"
+lazy_static = "^1.5.0"
 limiting-factor = "^0.8.0"
-log = "^0.4.17"
+log = "^0.4.22"
 rocket = "^0.4.11"
 rocket_codegen = "^0.4.11"
-serde_yaml = "^0.9.21"
+serde_yaml = "^0.9.33"
 
 [dependencies.clap]
-version = "~4.2.1"
+version = "~4.5.17"
 features = ["derive"]
 
 [dependencies.rocket_contrib]
@@ -24,5 +24,5 @@ default-features = false
 features = ["json"]
 
 [dependencies.serde]
-version = "^1.0.159"
+version = "^1.0.210"
 features = ["derive"]
