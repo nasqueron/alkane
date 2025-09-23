@@ -16,7 +16,7 @@ use clap::{Args, Parser};
 #[clap(author="Nasqueron project", version, about="Manage Alkane PaaS", long_about=None)]
 pub enum AlkaneCommand {
     /// Launch an HTTP server to expose the Alkane REST API
-    Server(ServerArgs),
+    Server,
 
     /// Initialize a site
     #[command(arg_required_else_help = true)]
@@ -38,12 +38,6 @@ pub enum AlkaneCommand {
 //  -------------------------------------------------------------
 //   Subcommands arguments
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
-
-#[derive(Debug, Args)]
-pub struct ServerArgs {
-    #[arg(long, default_value = "/")]
-    pub mounting_point: String,
-}
 
 #[derive(Debug, Args)]
 pub struct DeployArgs {

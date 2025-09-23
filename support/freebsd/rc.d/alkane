@@ -73,7 +73,7 @@ else
         alkane_log_enable="NO"
 fi
 
-alkane_env="${alkane_env} ROCKET_SECRET=$(openssl rand -base64 32) ROCKET_PORT=${alkane_port} ROCKET_ADDRESS=${alkane_address} ${alkane_env}"
+alkane_env="${alkane_env} APP_PORT=${alkane_port} APP_ADDRESS=${alkane_address} ${alkane_env}"
 
 pidfile=/var/run/alkane.pid
 procname="/usr/local/bin/alkane"

@@ -5,7 +5,6 @@
 //  License:        BSD-2-Clause
 //  -------------------------------------------------------------
 
-use crate::command::ServerArgs;
 use crate::config::AlkaneConfig;
 use crate::db::Database;
 use crate::deploy::AlkaneDeployError;
@@ -18,8 +17,8 @@ use crate::server::kernel::run;
 //  Actions only available in CLI
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-pub fn serve(args: ServerArgs, config: AlkaneConfig) {
-    run(config, &args.mounting_point);
+pub async fn serve(config: AlkaneConfig) -> bool {
+    run(config).await
 }
 
 //  -------------------------------------------------------------

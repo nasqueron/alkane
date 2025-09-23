@@ -43,7 +43,7 @@ lazy_static! {
 //  the Alkane configuration file alkane.conf
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-#[derive(Debug, Deserialize)]
+#[derive(Clone, Debug, Deserialize)]
 pub struct AlkaneConfig {
     /// The paths to the root directories used by Alkane
     roots: HashMap<String, String>,

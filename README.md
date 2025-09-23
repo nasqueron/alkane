@@ -61,14 +61,9 @@ The following environment variables allow to configure the server:
 
 | Variable           | Description     | Default value |
 |--------------------|-----------------|---------------|
-| ROCKET_PORT        | Server port     | 8000          |
-| ROCKET_ADDRESS     | Address to bind | 0.0.0.0       |
-
-The following options allow to configure the server:
-
-| Argument           | Description     | Default value |
-|--------------------|-----------------|---------------|
-| --mounting-point   | Mounting point  | /             |
+| APP_PORT           | Server port     | 8000          |
+| APP_ADDRESS        | Address to bind | 0.0.0.0       |
+| APP_MOUNT_POINT    | Mounting point  | /             |
 
 Nasqueron servers expose Alkane on the port 10206, for the alkane C2H6.
 
@@ -140,7 +135,7 @@ Released under BSD-2-Clause license. See [license](LICENSE).
 
 Alkane is written in Rust using:
 
-  - Rocket and Limiting Factor for the HTTP API
+  - Axum for the HTTP API
   - Clap to parse arguments
   - serde_yaml to deserialize configuration files
 

@@ -6,8 +6,6 @@
 //  Description:    Manage nginx and php-fpm Alkane PaaS
 //  -------------------------------------------------------------
 
-#![feature(decl_macro)]
-
 use std::process::exit;
 
 use clap::Parser;
@@ -35,7 +33,8 @@ mod services;
 //  Application entry point
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-fn main() {
+#[tokio::main]
+async fn main() {
     env_logger::init();
 
     let command = AlkaneCommand::parse(); //  Will exit if argument is missing or --help/--version provided.
@@ -48,8 +47,10 @@ fn main() {
     };
 
     match command {
-        AlkaneCommand::Server(args) => {
-            serve(args, config);
+        AlkaneCommand::Server => {
+            let result = serve(config).await;
+
+            exit(result.to_status_code())
         }
 
         AlkaneCommand::Update(args) => {

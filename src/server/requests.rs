@@ -5,22 +5,23 @@
 //  License:        BSD-2-Clause
 //  -------------------------------------------------------------
 
-use limiting_factor::api::guards::RequestBody;
-use limiting_factor::api::replies::{ApiJsonResponse, ApiResponse};
-use log::{debug, info, warn};
-use rocket::State;
-use rocket_codegen::{get, post};
+use axum::extract::{Path, State};
+use axum::http::StatusCode;
 
+use limiting_factor_axum::api::guards::AxumRequestBody as RequestBody;
+use limiting_factor_axum::api::replies::{ApiJsonResponse, ApiResponse, FailureResponse};
+
+use log::{debug, info, warn};
 use crate::actions;
 use crate::config::AlkaneConfig;
+use crate::deploy::DeployError;
 use crate::runner::RecipeStatus;
 
 //  -------------------------------------------------------------
 //  Monitoring
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-#[get("/status")]
-pub fn status() -> &'static str {
+pub async fn status() -> &'static str {
     "ALIVE"
 }
 
@@ -28,70 +29,68 @@ pub fn status() -> &'static str {
 //  Alkane requests
 //  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
-#[get("/is_present/<site_name>")]
-pub fn is_present(site_name: String, config: State<AlkaneConfig>) -> ApiJsonResponse<bool> {
+pub async fn is_present(
+    Path(site_name): Path<String>,
+    State(config): State<AlkaneConfig>,
+) -> ApiJsonResponse<bool> {
     actions::is_present(&site_name, &config).into_json_response()
 }
 
-#[post("/init/<site_name>", data = "<context>")]
-pub fn init(
-    site_name: String,
+pub async fn init(
+    Path(site_name): Path<String>,
+    State(config): State<AlkaneConfig>,
     context: RequestBody,
-    config: State<AlkaneConfig>,
 ) -> ApiJsonResponse<RecipeStatus> {
     info!("Deploying {}", &site_name);
 
     let context = context.into_optional_string();
     debug!("Context: {:?}", &context);
 
-    match actions::initialize(&site_name, context, &config) {
-        Ok(status) => status.into_json_response(),
-        Err(error) => {
-            warn!("{}", error);
-
-            RecipeStatus::Error.into_json_response()
-        }
-    }
+    actions::initialize(&site_name, context, &config)
+        .into_json_response()
 }
 
-#[post("/update/<site_name>", data = "<context>")]
-pub fn update(
-    site_name: String,
+pub async fn update(
+    Path(site_name): Path<String>,
+    State(config): State<AlkaneConfig>,
     context: RequestBody,
-    config: State<AlkaneConfig>,
 ) -> ApiJsonResponse<RecipeStatus> {
     info!("Deploying {}", &site_name);
 
     let context = context.into_optional_string();
     debug!("Context: {:?}", &context);
 
-    match actions::update(&site_name, context, &config) {
-        Ok(status) => status.into_json_response(),
-        Err(error) => {
-            warn!("{}", error);
-
-            RecipeStatus::Error.into_json_response()
-        }
-    }
+    actions::update(&site_name, context, &config)
+        .into_json_response()
 }
 
-#[post("/deploy/<site_name>", data = "<context>")]
-pub fn deploy(
-    site_name: String,
+pub async fn deploy(
+    Path(site_name): Path<String>,
+    State(config): State<AlkaneConfig>,
     context: RequestBody,
-    config: State<AlkaneConfig>,
 ) -> ApiJsonResponse<RecipeStatus> {
     info!("Deploying {}", &site_name);
 
     let context = context.into_optional_string();
     debug!("Context: {:?}", &context);
 
-    match actions::deploy(&site_name, context, &config) {
-        Ok(status) => status.into_json_response(),
-        Err(error) => {
-            warn!("{}", error);
+    actions::deploy(&site_name, context, &config)
+        .into_json_response()
+}
 
-            RecipeStatus::Error.into_json_response()
-        }
+//  -------------------------------------------------------------
+//  Custom error handling
+//
+//  Deploy errors are returned as 400 + the Alkane error message
+//  - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+impl FailureResponse for DeployError {
+    fn status_code(&self) -> StatusCode {
+        StatusCode::BAD_REQUEST
+    }
+
+    fn response(&self) -> String {
+        warn!("{}", self);     // Server log
+        format!("{}", self)    // API response
     }
 }

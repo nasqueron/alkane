@@ -55,7 +55,9 @@ impl RecipesStore {
         map.insert("ALKANE_SITE_PATH".to_string(), site.path.clone());
 
         if let Some(context) = &site.context {
-            map.insert("ALKANE_SITE_CONTEXT".to_string(), context.clone());
+            if !context.is_empty() {
+                map.insert("ALKANE_SITE_CONTEXT".to_string(), context.clone());
+            }
         }
 
         map
