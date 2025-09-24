@@ -44,7 +44,7 @@ pub struct DeployArgs {
     /// The name of the site to deploy, using sub.domain.tld format
     pub site_name: String,
 
-    /// The artifact to deploy. Allows CD to give metadata or an URL to download last artifact
+    /// The artifact to deploy. Allows CD to give metadata or a URL to download last artifact
     pub artifact: Option<String>,
 }
 

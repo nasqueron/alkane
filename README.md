@@ -118,7 +118,7 @@ Alkane update process helps us to separate concerns:
 At Nasqueron, we wanted to get a more standardized way to work and ensure
 the site ends in the same state if deployed through Salt or Jenkins CD.
 
-Currently, Alkane isn't responsible to rollback the deployment. To rollback,
+Currently, Alkane isn't responsible to roll back the deployment. To roll back,
 you can revert the commit, and trigger CD for it and Alkane will pick it
 like usual.
 
