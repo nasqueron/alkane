@@ -1,24 +1,24 @@
 [package]
 name = "alkane"
-version = "0.3.0"
+version = "0.3.1"
 edition = "2021"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
 axum = "0.8.4"
-env_logger = "^0.11.5"
+env_logger = "^0.11.11"
 lazy_static = "^1.5.0"
 limiting-factor-axum = "0.1.0"
-log = "^0.4.22"
+log = "^0.4.33"
 serde_yaml = "^0.9.33"
 
 [dependencies.clap]
-version = "~4.5.17"
+version = "~4.6.1"
 features = ["derive"]
 
 [dependencies.serde]
-version = "^1.0.210"
+version = "^1.0.228"
 features = ["derive"]
 
 [dependencies.tokio]
