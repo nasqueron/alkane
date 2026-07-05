@@ -17,7 +17,7 @@
 #           Default is "YES"
 # alkane_log_path (path): The path to the software log
 #           Default is "/var/log/alkane.log".
-# alkane_log_level (str): The level of verbosity of the log (debug/info will output Rocket/Hyper too)
+# alkane_log_level (str): The level of verbosity of the log (debug/info will output Axum too)
 #           Default is "warn"
 # alkane_syslog_output_enable (bool):    Set to enable syslog output.
 #                   Default is "NO". See daemon(8).
@@ -78,7 +78,7 @@ alkane_env="${alkane_env} APP_PORT=${alkane_port} APP_ADDRESS=${alkane_address} 
 pidfile=/var/run/alkane.pid
 procname="/usr/local/bin/alkane"
 command="/usr/sbin/daemon"
-command_args="-f -t ${name} ${alkane_log_flags} ${alkane_syslog_output_flags} -p ${pidfile} ${procname} server"
+command_args="-f -t ${name} ${alkane_log_flags} ${alkane_syslog_output_flags} -p ${pidfile} /usr/bin/env ${alkane_env} ${procname} server"
 
 start_precmd=alkane_startprecmd
 required_files="$alkane_config"
